@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "rm -rf build && tsc && mkdir -p build/popup && cp manifest.json build/ && cp -r popup/*.html build/popup/ && cp -r popup/*.css build/popup/ && cp -r popup/*.png build/popup/ && cp -r dist build/"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.1",
+    "typescript": "^5.8.3"
+  }
+}

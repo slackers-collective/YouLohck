@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "trace": true,
+      "name": "Debug Chrome Extension",
+      "url": "https://www.youtube.com",
+      "webRoot": "${workspaceFolder}",
+      "runtimeArgs": [
+        "--load-extension=${workspaceFolder}",
+        "--disk-cache-dir=${workspaceFolder}"
+      ]
+    }
+  ]
+}
