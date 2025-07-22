@@ -61,6 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: extension-v${{ env.VERSION }}.zip
-          asset_name: extension-v${{ env.VERSION }}.zip
+          asset_path: youtube-mix-remover-v${{ env.VERSION }}.zip
+          asset_name: youtube-mix-remover-v${{ env.VERSION }}.zip
           asset_content_type: application/zip
