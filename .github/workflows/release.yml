@@ -35,12 +35,11 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' manifest.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "zip_name=extension-v$VERSION.zip" >> $GITHUB_STATE
 
       - name: Zip the build directory
         run: |
           cd build
-          zip -r "../youtube-mix-remover-${VERSION}.zip" ./*
+          zip -r "../youtube-mix-remover-v${VERSION}.zip" ./*
 
       - name: Create Release
         id: create_release
