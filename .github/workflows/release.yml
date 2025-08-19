@@ -38,10 +38,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "ZIP_NAME=${{ env.EXTENSION_NAME }}-v$VERSION.zip" >> $GITHUB_ENV
 
+
       - name: Zip the build directory
         run: |
           cd build
           zip -r "../${{ env.ZIP_NAME }}.zip" ./*
+
 
       - name: Create Release
         id: create_release

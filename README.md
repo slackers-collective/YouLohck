@@ -1,5 +1,7 @@
 # YouLohck Extension
 
+[![Download Extension](https://img.shields.io/badge/Download-Release-blue?logo=google-chrome)](https://github.com/slackers-collective/youtube-automix/releases/latest)
+
 A browser extension to take back control of your YouTube experience by customizing the UI and blocking distracting features.
 
 ## Features
@@ -13,10 +15,11 @@ A browser extension to take back control of your YouTube experience by customizi
 
 ## Installation & Debugging
 
-1. Go to `chrome://extensions` in Chrome.
-2. Enable Developer mode.
-3. Click "Load unpacked" and select this project folder.
-4. The extension will be active and show a popup when clicked.
+1. Download and extract the .zip from [releases](https://github.com/slackers-collective/youtube-automix/releases/latest).
+2.  Go to `chrome://extensions` in Chrome.
+3. Enable Developer mode.
+4. Click **Load unpacked** and select this project folder, or drag and the drop the folder onto the extension page.
+5. The extension will be active and show a popup when clicked.
 
 ## Automated Debugging
 
