@@ -254,9 +254,6 @@
   .bg-red-400 {
     background-color: var(--color-red-400);
   }
-  .bg-surface-inverse {
-    background-color: var(--color-surface-inverse);
-  }
   .fill-foreground {
     fill: var(--color-text-default);
   }

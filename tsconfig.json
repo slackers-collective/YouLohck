@@ -15,9 +15,9 @@
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": true
 
-    "types": ["chrome", "@types/webextension-polyfill"]
+    // "types": ["chrome", "@types/webextension-polyfill"]
   },
   "include": ["**/*.d.ts", "**/*.ts", "background.ts", "popup/popup.ts"],
   "exclude": [

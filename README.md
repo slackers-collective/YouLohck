@@ -1,6 +1,15 @@
-# YouTube Automix Removal Extension
+# YouLohck Extension
 
-This browser extension automatically disables the YouTube automix feature
+A browser extension to take back control of your YouTube experience by customizing the UI and blocking distracting features.
+
+## Features
+
+- Hide Home Feed
+- Remove Mixes Playlists
+- Hide Shorts
+- Hide Recommended Videos
+- Disable Comments
+- Disable Autoplay
 
 ## Installation & Debugging
 

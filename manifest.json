@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouLohck",
-  "version": "1.0",
+  "version": "1.1",
   "description": "A customizable extension to enhance and control your YouTube experience.",
   "permissions": [
     "declarativeNetRequest",
