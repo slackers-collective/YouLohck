@@ -12,7 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      EXTENSION_NAME: YouLohck
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,11 +36,14 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' manifest.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "ZIP_NAME=${{ env.EXTENSION_NAME }}-v$VERSION.zip" >> $GITHUB_ENV
+
 
       - name: Zip the build directory
         run: |
           cd build
-          zip -r "../youtube-mix-remover-v${VERSION}.zip" ./*
+          zip -r "../${{ env.ZIP_NAME }}.zip" ./*
+
 
       - name: Create Release
         id: create_release
@@ -50,7 +54,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
           body: |
-            Release of the YouTube Automix Removal extension.
+            Release of the ${{ env.EXTENSION_NAME }} extension.
           draft: false
           prerelease: false
 
@@ -60,6 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: youtube-mix-remover-v${{ env.VERSION }}.zip
-          asset_name: youtube-mix-remover-v${{ env.VERSION }}.zip
+          asset_path: ${{ env.ZIP_NAME }}.zip
+          asset_name: ${{ env.ZIP_NAME }}.zip
           asset_content_type: application/zip

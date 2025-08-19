@@ -1,13 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Mix Removal",
-  "version": "1.0",
-  "description": "Get rid of YouTube mixes for a cleaner experience.",
-  "permissions": ["webNavigation", "tabs", "storage"],
+  "name": "YouLohck",
+  "version": "1.1",
+  "description": "A customizable extension to enhance and control your YouTube experience.",
+  "permissions": [
+    "declarativeNetRequest",
+    "webNavigation",
+    "scripting",
+    "tabs",
+    "storage"
+  ],
   "host_permissions": ["*://www.youtube.com/*"],
   "background": {
     "service_worker": "dist/background.js"
   },
+  "content_scripts": [
+    { "matches": ["*://www.youtube.com/*"], "js": ["dist/content.js"] }
+  ],
+
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {

@@ -1,23 +1,116 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>YouTube Mix Removal</title>
-    <link rel="stylesheet" href="popup.css">
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<body>
-    <div class="container">
-        <img src="icon48.png" alt="Extension Icon" class="icon">
-        <h2>Mix Remover</h2>
-        <p>Keep your YouTube experience simple.</p>
-        <label class="switch">
-            <input type="checkbox" id="toggle-removal" checked>
-            <span class="slider"></span>
-        </label>
-        <div class="status">Status: <span id="status">Active</span></div>
+    <!-- <link rel="stylesheet" href="popup.css"> -->
+    <script type="module" defer src="../dist/alpine.js"></script>
+    <link href="./output.css" rel="stylesheet" />
+  </head>
+
+  <body x-data="ytTweaks">
+    <main class="w-72 overflow-hidden rounded-md bg-background text-foreground">
+      <header class="justify-between items-center">
+        <div class="flex flex-1 items-center">
+          <span class="p-2">
+            <!-- <img class="size-6" src="./logo.svg" alt="logo" /> -->
+            <svg
+              class="size-6 fill-foreground"
+              width="31"
+              height="22"
+              viewBox="0 0 31 22"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M7.73898 3.23291L0 11C1.54794 12.5536 3.31622 13.8629 5.24415 14.8872C5.77704 16.3059 6.61232 17.6364 7.75 18.7782C12.0302 23.0739 18.9698 23.0739 23.25 18.7782C24.3877 17.6364 25.223 16.3059 25.7559 14.8872C27.6838 13.8629 29.4521 12.5536 31 11L23.2673 3.23923C23.2615 3.23342 23.2558 3.22762 23.25 3.22182C18.9698 -1.07394 12.0302 -1.07394 7.75 3.22182C7.74633 3.22552 7.74265 3.22921 7.73898 3.23291ZM22.5095 16.2886C20.2542 17.0524 17.8868 17.4436 15.5 17.4436C13.1132 17.4436 10.7458 17.0524 8.49059 16.2886C8.73495 16.6139 9.00472 16.9262 9.3 17.2225C12.7242 20.6592 18.2758 20.6592 21.7 17.2225C21.9953 16.9262 22.2651 16.6139 22.5095 16.2886ZM9.45895 4.62188C10.0404 5.00744 10.6587 5.33737 11.3057 5.60635C12.6354 6.15915 14.0607 6.44367 15.5 6.44367C16.9393 6.44367 18.3646 6.15915 19.6943 5.60635C20.3413 5.33737 20.9596 5.00743 21.5411 4.62187C18.1596 1.3927 12.8404 1.39271 9.45895 4.62188Z"
+              />
+            </svg>
+          </span>
+          <span class="text-base font-bold">YouLohck</span>
+        </div>
+        <div class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </div>
+      </header>
+      <hr />
+
+      <div>
+        <span class="px-4 text-sm"
+          >Manage and control your Youtube feed and everything just the way you
+          want it.</span
+        >
+      </div>
+      <hr />
+      <section class="flex flex-col gap-y-1 p-4 text-sm">
+        <form>
+          <template x-for="opt in options" :key="opt.id">
+            <div class="">
+              <label class="switch gap-x-1">
+                <input
+                  :id="opt.id"
+                  :name="opt.id"
+                  type="checkbox"
+                  x-bind:checked="opt.enabled"
+                  x-on:change="save"
+                  class="sr-only peer"
+                />
+                <div class="switch__track"></div>
+                <div class="switch__thumb"></div>
+                <p class="text-xs" x-text="opt.label">Toggle</p>
+              </label>
+            </div>
+          </template>
+        </form>
+      </section>
+
+      <footer class="justify-center items-center">
+        <button
+        id="toggle-removal"
+          type="button"
+          @click="toggle"
+          :class="statusClass"
+          class="cursor-pointer w-full py-2 text-white inline-flex text-sm justify-center items-center gap-1 rounded-md"
+        >
+          <svg
+            class="size-5"
+            width="20"
+            height="21"
+            viewBox="0 0 20 21"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M10.8333 2.99999C10.8333 2.53975 10.4602 2.16666 10 2.16666C9.53976 2.16666 9.16667 2.53975 9.16667 2.99999V3.8791C5.41671 4.29363 2.5 7.47286 2.5 11.3333C2.5 15.4755 5.85786 18.8333 10 18.8333C14.1421 18.8333 17.5 15.4755 17.5 11.3333C17.5 7.47286 14.5833 4.29363 10.8333 3.8791V2.99999ZM9.16667 5.55906V9.66666C9.16667 10.1269 9.53976 10.5 10 10.5C10.4602 10.5 10.8333 10.1269 10.8333 9.66666V5.55906C13.6602 5.96342 15.8333 8.3946 15.8333 11.3333C15.8333 14.555 13.2217 17.1667 10 17.1667C6.77834 17.1667 4.16667 14.555 4.16667 11.3333C4.16667 8.3946 6.33976 5.96342 9.16667 5.55906Z"
+              fill="white"
+            />
+          </svg>
+          <p id="status" x-text="statusText">Turn off</p>
+        </button>
+       
+      </footer>
+    </main>
+   
     </div>
     <script src="../dist/popup/popup.js"></script>
-</body>
+  </body>
 
+  <!-- <script type="module" src="../dist/alpine.js"></script> -->
 </html>
