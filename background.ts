@@ -242,7 +242,7 @@ const activeWebNavigationListeners = new Map<
 // const activeeventlisteners = new Map<WebNavigationEventName, Array<keyof ExtensionOptions>>();
 async function initializeListeners() {
   const data = await chrome.storage.sync.get(["extensionEnabled", "options"]);
-  const options = data["options"];
+  const options = data["options"] ?? {}; // default empty or runtime undefined error
   console.log(options, "current options");
   console.log(ALL_WEB_EVENTS, "all web events");
   if (!data.extensionEnabled) {
