@@ -10,6 +10,8 @@ const ALL_CSS = [SHORTS_CSS, HOME_FEED_CSS, RECOMMENDED_CSS, COMMENTS_CSS].join(
   "\n"
 );
 
+const YT_URL_MATCH = "*://*.youtube.com/*";
+
 type Message = {
   action: "TOGGLE_OPTION" | "STATE_CHANGE";
   option: keyof typeof settingsConfig;
@@ -81,34 +83,31 @@ chrome.runtime.onMessage.addListener((message: Message) => {
     if (message.action === "TOGGLE_OPTION") {
       console.log("Message received:", message);
 
-      chrome.tabs.query(
-        { url: "*://www.youtube.com/*", currentWindow: true },
-        (tabs) => {
-          // chrome.tabs.get(message.tabId, (tab) => {
-          for (const tab of tabs) {
-            if (chrome.runtime.lastError) {
-              console.error("Error getting tab:", chrome.runtime.lastError);
-              return;
-            }
-            const setting = settingsConfig[message.option];
-            if (!setting) {
-              console.warn(`No handler found for option: ${message.option}`);
-              return;
-            }
-            if (setting.dnr) {
-              setting.dnr.rule(message.enabled);
-              return;
-            }
-            setting.webNavigation?.handler(
-              {
-                tabId: tab.id,
-                url: tab.url,
-              } as chrome.webNavigation.WebNavigationTransitionCallbackDetails,
-              message.enabled
-            );
+      chrome.tabs.query({ url: YT_URL_MATCH, currentWindow: true }, (tabs) => {
+        // chrome.tabs.get(message.tabId, (tab) => {
+        for (const tab of tabs) {
+          if (chrome.runtime.lastError) {
+            console.error("Error getting tab:", chrome.runtime.lastError);
+            return;
           }
+          const setting = settingsConfig[message.option];
+          if (!setting) {
+            console.warn(`No handler found for option: ${message.option}`);
+            return;
+          }
+          if (setting.dnr) {
+            setting.dnr.rule(message.enabled);
+            return;
+          }
+          setting.webNavigation?.handler(
+            {
+              tabId: tab.id,
+              url: tab.url,
+            } as chrome.webNavigation.WebNavigationTransitionCallbackDetails,
+            message.enabled
+          );
         }
-      );
+      });
     }
   });
   return true;
@@ -242,7 +241,7 @@ const activeWebNavigationListeners = new Map<
 // const activeeventlisteners = new Map<WebNavigationEventName, Array<keyof ExtensionOptions>>();
 async function initializeListeners() {
   const data = await chrome.storage.sync.get(["extensionEnabled", "options"]);
-  const options = data["options"];
+  const options = data["options"] ?? {}; // default empty or runtime undefined error
   console.log(options, "current options");
   console.log(ALL_WEB_EVENTS, "all web events");
   if (!data.extensionEnabled) {
@@ -272,24 +271,21 @@ async function initializeListeners() {
 
   // apply the settings immediately once since it wont run until the event listeners also fire
   // helps too if i allow user to toggle options when extension is disabled then they later turn it on
-  chrome.tabs.query(
-    { url: "*://www.youtube.com/*", currentWindow: true },
-    (tabs) => {
-      for (const tab of tabs) {
-        const activeTab = tab;
-        const details = { tabId: activeTab.id, url: activeTab.url };
+  chrome.tabs.query({ url: YT_URL_MATCH, currentWindow: true }, (tabs) => {
+    for (const tab of tabs) {
+      const activeTab = tab;
+      const details = { tabId: activeTab.id, url: activeTab.url };
 
-        for (const key in settingsConfig) {
-          const feature = settingsConfig[key as keyof typeof settingsConfig];
-          const isEnabled = options[key as keyof ExtensionOptions];
+      for (const key in settingsConfig) {
+        const feature = settingsConfig[key as keyof typeof settingsConfig];
+        const isEnabled = options[key as keyof ExtensionOptions];
 
-          if (feature?.webNavigation) {
-            feature.webNavigation.handler(details, isEnabled);
-          }
+        if (feature?.webNavigation) {
+          feature.webNavigation.handler(details, isEnabled);
         }
       }
     }
-  );
+  });
 
   //pass all webnavevents names to be registered with its listeners
   ALL_WEB_EVENTS.forEach((eventName) => {
@@ -297,7 +293,7 @@ async function initializeListeners() {
     if (event && typeof event.addListener === "function") {
       const listener = (details: any) =>
         applyForEventListener(eventName, details);
-      event.addListener(listener, { url: [{ hostEquals: "www.youtube.com" }] });
+      event.addListener(listener, { url: [{ hostSuffix: "youtube.com" }] });
       //without storing a stable reference for the added event listeners
       // removing them will fail and I start seeing multiple logs
       activeWebNavigationListeners.set(eventName, listener);
@@ -310,7 +306,7 @@ async function initializeListeners() {
 async function cleanUpFeatures() {
   const allTabs = await chrome.tabs.query({
     currentWindow: true,
-    url: "*://www.youtube.com/*",
+    url: YT_URL_MATCH,
   });
   // Remove all declarativeNetRequest rules
   if (DNR_RULES.length > 0) {
@@ -350,7 +346,7 @@ async function cleanUpFeatures() {
 }
 // #TODO: not every option can work on onCommited, some are historystateupdated because of spa shit i think
 function createCssHandler(css: string, featureName: string) {
-  return function (
+  return async function (
     details: chrome.webNavigation.WebNavigationCallbackDetails,
     enabled?: boolean
   ) {
@@ -358,10 +354,10 @@ function createCssHandler(css: string, featureName: string) {
       const tabId = details.tabId;
       if (enabled) {
         console.info(`[YouLohck] Hiding ${featureName}.`);
-        chrome.scripting.insertCSS({ target: { tabId }, css });
+        await chrome.scripting.insertCSS({ target: { tabId }, css });
       } else {
         console.info(`[YouLohck] Showing ${featureName}.`);
-        chrome.scripting.removeCSS({ target: { tabId }, css });
+        await chrome.scripting.removeCSS({ target: { tabId }, css });
       }
     } catch (error) {
       if (error instanceof Error && !error.message.includes("No tab with id")) {

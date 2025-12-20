@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouLohck",
-  "version": "1.1",
+  "version": "1.1.2",
   "description": "A customizable extension to enhance and control your YouTube experience.",
   "permissions": [
     "declarativeNetRequest",
@@ -10,12 +10,15 @@
     "tabs",
     "storage"
   ],
-  "host_permissions": ["*://www.youtube.com/*"],
+  "host_permissions": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
   "background": {
     "service_worker": "dist/background.js"
   },
   "content_scripts": [
-    { "matches": ["*://www.youtube.com/*"], "js": ["dist/content.js"] }
+    {
+      "matches": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
+      "js": ["dist/content.js"]
+    }
   ],
 
   "action": {
